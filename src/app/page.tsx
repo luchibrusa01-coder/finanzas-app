@@ -5,13 +5,13 @@ import { useApp } from '@/context/AppContext'
 import Ingresos from '@/components/pesos/Ingresos'
 import Gastos from '@/components/pesos/Gastos'
 import ResumenPesos from '@/components/pesos/ResumenPesos'
+import Historial from '@/components/pesos/Historial'
 import Activos from '@/components/dolares/Activos'
-import PlanInversion from '@/components/dolares/PlanInversion'
+import MovimientosInversion from '@/components/dolares/MovimientosInversion'
 import ProyeccionSPY from '@/components/dolares/ProyeccionSPY'
 import ResumenDolares from '@/components/dolares/ResumenDolares'
 import Configuracion from '@/components/shared/Configuracion'
 import ExportarResumen from '@/components/shared/ExportarResumen'
-import Historial from '@/components/pesos/Historial'
 
 type Tab = 'pesos' | 'dolares' | 'config'
 
@@ -37,7 +37,6 @@ export default function Home() {
             <h1 className="font-bold text-gray-900 dark:text-white text-base leading-tight">{greeting}</h1>
             <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{fecha}</p>
           </div>
-          {/* Tab nav — desktop top / hidden on mobile (shown bottom) */}
           <nav className="hidden sm:flex gap-1">
             {TABS.map(t => (
               <button
@@ -70,8 +69,8 @@ export default function Home() {
         {tab === 'dolares' && (
           <>
             <ResumenDolares />
+            <MovimientosInversion />
             <Activos />
-            <PlanInversion />
             <ProyeccionSPY />
           </>
         )}
@@ -86,7 +85,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* Bottom navigation — mobile only */}
+      {/* Bottom nav — mobile only */}
       <nav className="sm:hidden fixed bottom-0 inset-x-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-t border-gray-200 dark:border-gray-700 safe-area-pb z-40">
         <div className="flex justify-around py-1 px-2">
           {TABS.map(t => (

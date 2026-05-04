@@ -7,15 +7,17 @@ import { formatUSD, calcFV } from '@/utils/format'
 const YEARS = [1, 2, 3, 5, 7, 10, 15, 20]
 
 export default function ProyeccionInstrumentos() {
-  const { asignaciones, activos } = useApp()
+  const { activos } = useApp()
   const [abierto, setAbierto] = useState<string | null>(null)
 
-  if (asignaciones.length === 0) {
+  const activosConAporte = activos.filter(a => a.aporteMensual > 0 || a.monto > 0)
+
+  if (activosConAporte.length === 0) {
     return (
       <section className="card">
         <h2 className="section-title">Proyección por instrumento</h2>
         <p className="text-sm text-gray-400 text-center py-4">
-          Cargá instrumentos en el plan de inversión para ver las proyecciones
+          Editá un activo y poné un aporte mensual estimado para ver su proyección
         </p>
       </section>
     )
@@ -29,34 +31,26 @@ export default function ProyeccionInstrumentos() {
       </p>
 
       <div className="space-y-3">
-        {asignaciones.map(asig => {
-          // Buscar activo con nombre similar para usar como capital inicial
-          const activoMatch = activos.find(a =>
-            a.nombre.toLowerCase().includes(asig.nombre.toLowerCase()) ||
-            asig.nombre.toLowerCase().includes(a.nombre.toLowerCase())
-          )
-          const capitalActual = activoMatch?.monto ?? 0
-          const isOpen = abierto === asig.id
-
+        {activosConAporte.map(a => {
+          const isOpen = abierto === a.id
           const rows = YEARS.map(y => {
-            const fv = calcFV(capitalActual, asig.monto, y)
-            const totalAportado = capitalActual + asig.monto * 12 * y
+            const fv = calcFV(a.monto, a.aporteMensual, y)
+            const totalAportado = a.monto + a.aporteMensual * 12 * y
             const ganancia = fv - totalAportado
             return { years: y, fv, totalAportado, ganancia }
           })
 
           return (
-            <div key={asig.id} className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-              {/* Header del instrumento */}
+            <div key={a.id} className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
               <button
                 className="w-full flex justify-between items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors"
-                onClick={() => setAbierto(isOpen ? null : asig.id)}
+                onClick={() => setAbierto(isOpen ? null : a.id)}
               >
                 <div className="text-left">
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">{asig.nombre}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">{a.nombre}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Aporte: {formatUSD(asig.monto)}/mes
-                    {capitalActual > 0 && ` · Capital: ${formatUSD(capitalActual)}`}
+                    Capital: {formatUSD(a.monto)}
+                    {a.aporteMensual > 0 && ` · Aporte: ${formatUSD(a.aporteMensual)}/mes`}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -67,7 +61,6 @@ export default function ProyeccionInstrumentos() {
                 </div>
               </button>
 
-              {/* Tabla desplegable */}
               {isOpen && (
                 <div className="border-t border-gray-200 dark:border-gray-700 overflow-x-auto">
                   <table className="w-full text-sm">
@@ -98,9 +91,9 @@ export default function ProyeccionInstrumentos() {
                       ))}
                     </tbody>
                   </table>
-                  {capitalActual === 0 && (
+                  {a.aporteMensual === 0 && (
                     <p className="text-xs text-gray-400 p-3">
-                      💡 Si cargás este instrumento en Activos con el mismo nombre, la proyección incluirá tu capital actual.
+                      💡 Editá el activo y ponele un aporte mensual estimado para ver la proyección completa.
                     </p>
                   )}
                 </div>
@@ -111,7 +104,7 @@ export default function ProyeccionInstrumentos() {
       </div>
 
       <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
-        Proyección con tasa del 10% anual compuesto. No garantiza rendimientos futuros.
+        Proyección con 10% anual compuesto. No garantiza rendimientos futuros.
       </p>
     </section>
   )

@@ -2,6 +2,7 @@ export interface Ingreso {
   id: string
   nombre: string
   monto: number
+  fijo: boolean
 }
 
 export interface Categoria {
@@ -23,11 +24,13 @@ export interface Activo {
   nombre: string
   monto: number
   tipo: TipoActivo
+  aporteMensual: number
 }
 
-export interface AsignacionInversion {
+export interface MovimientoInversion {
   id: string
   nombre: string
+  activoId: string
   monto: number
 }
 
@@ -51,7 +54,7 @@ export interface AppState {
   gastos: Gasto[]
   categorias: Categoria[]
   activos: Activo[]
-  asignaciones: AsignacionInversion[]
+  movimientos: MovimientoInversion[]
   config: Config
   historial: HistorialMes[]
 }
