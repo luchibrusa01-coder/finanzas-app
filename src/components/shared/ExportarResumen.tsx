@@ -8,7 +8,7 @@ export default function ExportarResumen() {
   const {
     config, ingresos, gastos, categorias,
     totalIngresos, totalGastos, sobranteARS, sobranteUSD,
-    activos, patrimonioUSD, asignaciones,
+    activos, patrimonioUSD, movimientos,
   } = useApp()
   const [show, setShow] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -25,7 +25,7 @@ export default function ExportarResumen() {
 
     if (ingresos.length) {
       lines.push('Ingresos:')
-      ingresos.forEach(i => lines.push(`  • ${i.nombre}: ${formatARS(i.monto)}`))
+      ingresos.forEach(i => lines.push(`  • ${i.nombre} (${i.fijo ? 'Fijo' : 'Variable'}): ${formatARS(i.monto)}`))
     }
     lines.push(`Total ingresos: ${formatARS(totalIngresos)}`)
     lines.push('')
@@ -52,18 +52,17 @@ export default function ExportarResumen() {
     }
     lines.push(`Patrimonio total: ${formatUSD(patrimonioUSD)}`)
 
-    if (asignaciones.length) {
+    if (movimientos.length) {
       lines.push('')
-      lines.push('Plan de inversión este mes:')
-      asignaciones.forEach(a => lines.push(`  → ${a.nombre}: ${formatUSD(a.monto)}`))
+      lines.push('Inversiones realizadas este mes:')
+      movimientos.forEach(m => lines.push(`  → ${m.nombre}: ${formatUSD(m.monto)}`))
     }
 
     return lines.join('\n')
   }
 
   function handleCopy() {
-    const text = buildText()
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(buildText()).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
     })
@@ -71,10 +70,7 @@ export default function ExportarResumen() {
 
   return (
     <>
-      <button
-        onClick={() => setShow(true)}
-        className="btn-ghost w-full text-sm"
-      >
+      <button onClick={() => setShow(true)} className="btn-ghost w-full text-sm">
         Exportar resumen mensual
       </button>
 
@@ -89,10 +85,7 @@ export default function ExportarResumen() {
               <pre className="text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 rounded-xl p-4 overflow-auto max-h-72 whitespace-pre-wrap font-mono">
                 {buildText()}
               </pre>
-              <button
-                onClick={handleCopy}
-                className="btn-primary w-full mt-3"
-              >
+              <button onClick={handleCopy} className="btn-primary w-full mt-3">
                 {copied ? '✓ Copiado al portapapeles' : 'Copiar texto'}
               </button>
             </div>

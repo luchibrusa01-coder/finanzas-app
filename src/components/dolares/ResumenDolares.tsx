@@ -16,9 +16,8 @@ const TIPO_COLOR_INDEX: Record<TipoActivo, number> = {
 const PROYECCION_YEARS = [5, 10, 15]
 
 export default function ResumenDolares() {
-  const { activos, patrimonioUSD, sobranteUSD } = useApp()
+  const { activos, patrimonioUSD } = useApp()
 
-  // Distribution by type
   const porTipo: Partial<Record<TipoActivo, number>> = {}
   for (const a of activos) {
     porTipo[a.tipo] = (porTipo[a.tipo] ?? 0) + a.monto
@@ -31,16 +30,18 @@ export default function ResumenDolares() {
     colorIndex: TIPO_COLOR_INDEX[tipo as TipoActivo],
   })).sort((a, b) => b.value - a.value)
 
+  // Aporte mensual total = suma de aportes de todos los activos
+  const aporteMensualTotal = activos.reduce((s, a) => s + (a.aporteMensual ?? 0), 0)
+
   const proyecciones = PROYECCION_YEARS.map(y => ({
     years: y,
-    valor: calcFV(patrimonioUSD, sobranteUSD, y),
+    valor: calcFV(patrimonioUSD, aporteMensualTotal, y),
   }))
 
   return (
     <section className="card">
       <h2 className="section-title">Resumen de inversiones</h2>
 
-      {/* Patrimonio total */}
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-5">
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Patrimonio total</p>
         <p className="text-3xl font-bold text-blue-700 dark:text-blue-400 tabular-nums">
@@ -51,7 +52,6 @@ export default function ResumenDolares() {
         </p>
       </div>
 
-      {/* Distribution chart */}
       {chartItems.length > 0 && (
         <div className="mb-5">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
@@ -61,7 +61,6 @@ export default function ResumenDolares() {
         </div>
       )}
 
-      {/* Proyecciones */}
       <div>
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Proyección patrimonial (10% anual)
@@ -76,9 +75,11 @@ export default function ResumenDolares() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-gray-400 mt-2">
-          Aporte mensual: {formatUSD(sobranteUSD)}
-        </p>
+        {aporteMensualTotal > 0 && (
+          <p className="text-xs text-gray-400 mt-2">
+            Aporte mensual total: {formatUSD(aporteMensualTotal)}
+          </p>
+        )}
       </div>
     </section>
   )

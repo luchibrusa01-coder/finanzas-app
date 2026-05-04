@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { Ingreso, Gasto, Categoria, Activo, MovimientoInversion, Config, HistorialMes } from '@/types'
+import { Ingreso, Gasto, Categoria, Activo, MovimientoInversion, Config, HistorialMes, TipoActivo } from '@/types'
 import { generateId } from '@/utils/format'
 
 const INITIAL_CATEGORIAS: Categoria[] = [
@@ -46,7 +46,7 @@ interface AppContextType {
   removeActivo: (id: string) => void
   // Movimientos de inversión
   addMovimiento: (nombre: string, activoId: string, monto: number) => void
-  addMovimientoNuevo: (nombre: string, tipo: import('@/types').TipoActivo, monto: number) => void
+  addMovimientoNuevo: (nombre: string, tipo: TipoActivo, monto: number) => void
   removeMovimiento: (id: string) => void
   // Config
   updateConfig: (partial: Partial<Config>) => void
@@ -139,7 +139,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Movimiento con activo nuevo — crea activo y movimiento juntos
-  const addMovimientoNuevo = (nombre: string, tipo: import('@/types').TipoActivo, monto: number) => {
+  const addMovimientoNuevo = (nombre: string, tipo: TipoActivo, monto: number) => {
     const nuevoActivoId = generateId()
     setActivos(prev => [...prev, { id: nuevoActivoId, nombre, monto, tipo, aporteMensual: 0 }])
     setMovimientos(prev => [...prev, { id: generateId(), nombre, activoId: nuevoActivoId, monto }])
