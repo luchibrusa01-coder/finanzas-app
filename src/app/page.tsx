@@ -11,6 +11,7 @@ import ProyeccionSPY from '@/components/dolares/ProyeccionSPY'
 import ResumenDolares from '@/components/dolares/ResumenDolares'
 import Configuracion from '@/components/shared/Configuracion'
 import ExportarResumen from '@/components/shared/ExportarResumen'
+import Historial from '@/components/pesos/Historial'
 
 type Tab = 'pesos' | 'dolares' | 'config'
 
@@ -59,6 +60,7 @@ export default function Home() {
             <ResumenPesos />
             <Ingresos />
             <Gastos />
+            <Historial />
             <div className="pt-1">
               <ExportarResumen />
             </div>

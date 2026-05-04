@@ -36,6 +36,16 @@ export interface Config {
   nombreUsuario: string
 }
 
+export interface HistorialMes {
+  id: string
+  mes: string
+  totalIngresos: number
+  totalGastos: number
+  sobranteARS: number
+  sobranteUSD: number
+  tipoCambio: number
+}
+
 export interface AppState {
   ingresos: Ingreso[]
   gastos: Gasto[]
@@ -43,4 +53,5 @@ export interface AppState {
   activos: Activo[]
   asignaciones: AsignacionInversion[]
   config: Config
+  historial: HistorialMes[]
 }
